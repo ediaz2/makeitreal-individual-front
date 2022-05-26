@@ -1,5 +1,7 @@
 import type { NextPage } from 'next';
 import Head from 'next/head';
+import { useRouter } from 'next/router';
+import { signIn } from 'next-auth/react';
 import ky from 'ky';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -26,6 +28,8 @@ const schema = z
 type FormData = z.infer<typeof schema>;
 
 const Register: NextPage = () => {
+  const router = useRouter();
+
   const {
     register,
     handleSubmit,
@@ -75,6 +79,12 @@ const Register: NextPage = () => {
         },
         body: JSON.stringify(data),
       });
+
+      await signIn('credentials', {
+        email: data.email,
+        password: data.password,
+      });
+
       reset();
     }
   };

@@ -32,9 +32,14 @@ const middleware = (req: NextRequest) => {
 
   if (!pathname.includes('.') && !pathname.startsWith('/api')) {
     if (currentHost == 'app') {
-      if (!['/login', '/register'].includes(pathname) && !req.cookies['next-auth.session-token']) {
-        url.href = `${url.protocol}//app.${process.env.DOMAIN}/login`;
-        return NextResponse.redirect(url);
+      if (!['/login', '/register'].includes(pathname)) {
+        if (
+          !req.cookies['next-auth.session-token'] ||
+          !req.cookies['next-auth.session-token']
+        ) {
+          url.href = `${url.protocol}//app.${process.env.DOMAIN}/login`;
+          return NextResponse.redirect(url);
+        }
       } else {
         url.pathname = `/app${pathname}`;
         return NextResponse.rewrite(url);
