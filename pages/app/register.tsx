@@ -1,6 +1,6 @@
 import type { NextPage } from 'next';
 import Head from 'next/head';
-import { httpClient } from 'helpers';
+import ky from 'ky';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -37,14 +37,14 @@ const Register: NextPage = () => {
   });
 
   const validateTenant = async (tenant: string) => {
-    const { exists } = await httpClient(
+    const { exists } = await ky(
       `https://api.mytienda.xyz/api/users/tenant/${tenant}`,
     ).json<{ exists: string }>();
     return !exists;
   };
 
   const validateRuc = async (ruc: string) => {
-    const { data } = await httpClient(
+    const { data } = await ky(
       `https://sunat.mytienda.xyz/api/ruc/${ruc}`,
     ).json<{ data: Array<Record<string, any>> }>();
     return data.length !== 0;
@@ -69,7 +69,7 @@ const Register: NextPage = () => {
     }
 
     if (isValidRuc && isValidTenant) {
-      await httpClient.post('auth/register', {
+      await ky.post('/api/auth/register', {
         headers: {
           'Content-Type': 'application/json',
         },
